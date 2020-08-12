@@ -6,6 +6,18 @@
   <title>emoji.studio</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400&display=swap" rel="stylesheet">
+  <style type="text/css">
+  img {
+    /* https://stackoverflow.com/a/35362074/23649 */
+    background-image:
+      linear-gradient(45deg, #eee 25%, transparent 25%),
+      linear-gradient(-45deg, #eee 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #eee 75%),
+      linear-gradient(-45deg, transparent 75%, #eee 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  }
+  </style>
 </head>
 <body>
 <div class="col-md-6 mx-auto my-4">
@@ -66,7 +78,7 @@
   </form>
   <div class="row">
     <div class="col-6">
-      <canvas class="img-thumbnail" />
+      <img class="img-thumbnail" />
     </div>
   </div>
   <div>
@@ -74,7 +86,8 @@
   </div>
 </div>
 <script>
-  const canvas = document.querySelector("canvas");
+  const img = document.querySelector("img");
+  const canvas = document.createElement("canvas");
   canvas.width = 128;
   canvas.height = 128;
 
@@ -202,6 +215,8 @@
     ctx.strokeText(text, textAreaX, textAreaY);
     ctx.fillText(text, textAreaX, textAreaY);
     ctx.restore();
+
+    img.src = canvas.toDataURL();
   }
 
   if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
@@ -216,14 +231,10 @@
   });
 
   document.querySelector("button#download").addEventListener("click", () => {
-    canvas.toBlob((blob) => {
-      const a = document.createElement("a");
-      const url = URL.createObjectURL(blob);
-      a.href = url;
-      a.download = getSettings().text + ".png";
-      a.click();
-      URL.revokeObjectURL(url);
-    });
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL();
+    a.download = getSettings().text + ".png";
+    a.click();
   });
 </script>
 </body>
