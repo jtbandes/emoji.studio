@@ -7,6 +7,7 @@ import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
 
 import styled from "styled-components";
+import { useBase64HashState, useSubState } from "./util/hooks";
 
 function Radios({
   options,
@@ -47,12 +48,15 @@ const Thumbnail = styled.img`
 function App() {
   // https://stackoverflow.com/a/58056067/23649
   const img = useRef() as React.MutableRefObject<HTMLImageElement>;
+  const $hashState = useBase64HashState({});
+
+  const $soonState = useSubState($hashState, ["soon"]);
 
   const textPlaceholder = "SOON";
-  const [textInput, setTextInput] = useState<string>("");
+  const [textInput, setTextInput] = useSubState<string>($soonState, ["text"], "");
   const text = textInput || textPlaceholder;
-  const [arrowDir, setArrowDir] = useState<string>("right");
-  const [textPos, setTextPos] = useState<string>("bottom");
+  const [arrowDir, setArrowDir] = useSubState<string>($soonState, ["arrow_dir"], "right");
+  const [textPos, setTextPos] = useSubState<string>($soonState, ["text_pos"], "bottom");
 
   const [canvas] = useState(() => document.createElement("canvas"));
   useEffect(() => {
@@ -183,7 +187,7 @@ function App() {
             <Form.Control
               type="text"
               placeholder={textPlaceholder}
-              value={text}
+              value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
             />
           </div>
